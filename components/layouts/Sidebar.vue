@@ -1,9 +1,5 @@
 <template>
-  <nav id="sidebar" :class="{ 'collapsed': !sidebarExpanded }">
-    <div class="sidebar-header">
-      <h3 class="mb-0">MedicalApp  {{sidebarExpanded ? 'true' : 'false'}}</h3>
-    </div>
-
+  <aside id="sidebar" :class="{ 'collapsed': !sidebarExpanded }">
     <div class="sidebar-body">
       <ul class="nav flex-column">
         <li class="nav-item">
@@ -81,14 +77,10 @@
         </li>
       </ul>
     </div>
-  </nav>
+  </aside>
 </template>
 
 <script setup lang="ts">
-  // import { useRouter, useRoute } from 'vue-router'
-  // import { defineProps } from 'vue'
-
-
   const props = defineProps({
     isExpanded: {
       type: Boolean,
@@ -115,7 +107,6 @@
 #sidebar {
   min-width: 250px;
   max-width: 250px;
-  background: #4e73df;
   color: #fff;
   transition: all 0.3s;
   height: 100vh;
@@ -138,7 +129,7 @@
 }
 
 .sidebar-body {
-  padding: 20px 0;
+  padding: 120px 0;
   overflow-y: auto;
   flex: 1;
 }
@@ -148,15 +139,20 @@
 }
 
 .nav-link {
-  color: rgba(255, 255, 255, 0.8);
+  color: #A0A0A0;
   padding: 10px 20px;
   display: flex;
   align-items: center;
   transition: all 0.3s;
 }
 
-.nav-link:hover, .nav-link.active {
-  color: white;
+.nav-link.active, .nav-link.active:hover {
+  color: #fefefe;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link:hover{
+  color: rgb(83, 82, 82);
   background: rgba(255, 255, 255, 0.1);
 }
 
@@ -172,8 +168,8 @@
     top: 0;
     left: 0;
     height: 100vh;
-    z-index: 1050;
-    margin-left: -250px;
+    z-index: 9999;
+    background: #f1f3fb;
   }
   
   #sidebar.collapsed {

@@ -2,24 +2,22 @@
   <div class="wrapper">
     <LayoutsSidebar :is-expanded="sidebarOpen" />
     <div id="content-wrapper" :class="{ 'sidebar-collapsed': !sidebarOpen }">
-      <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top">
+      <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container-fluid">
           <button type="button" class="btn btn-light d-md-none me-3" @click="toggleSidebar" >
           	<BIcon icon="bi:list" margin="2" />
           </button>
-          <a class="navbar-brand d-md-none" href="#">MedicalApp</a>
           
           <div class="d-flex ms-auto align-items-center">
-            <button class="btn btn-sm btn-outline-secondary me-3 d-none d-md-block">
-              Take a tour
+            <button class="btn btn-sm me-3  d-none d-md-block">
+							<span class="tour">Take a tour</span>             
             </button>
             
             <div class="dropdown me-3">
               <button id="messagesDropdown" class="btn btn-link text-muted position-relative" type="button"  data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-envelope fs-5"></i>
+								<BIcon icon="bi:envelope" />
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                  3 {{sidebarOpen ? 'true' : 'false'}}
-                  <span class="visually-hidden">unread messages</span>
+                  3
                 </span>
               </button>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="messagesDropdown">
@@ -33,39 +31,20 @@
             </div>
             
             <div class="dropdown me-3">
-              <button class="btn btn-link text-muted position-relative" type="button" id="notificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-bell fs-5"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                  5
-                  <span class="visually-hidden">unread notifications</span>
-                </span>
+              <button id="notificationsDropdown" class="btn btn-link text-muted position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<BIcon icon="bi:bell-fill"/>
               </button>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
-                <li><h6 class="dropdown-header">Recent Notifications</h6></li>
-                <li><a class="dropdown-item" href="#">Medical record updated</a></li>
-                <li><a class="dropdown-item" href="#">Appointment confirmed</a></li>
-                <li><a class="dropdown-item" href="#">Payment received</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">View all notifications</a></li>
-              </ul>
             </div>
             
             <div class="dropdown">
-              <button class="btn btn-link p-0" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://ui-avatars.com/api/?name=Doctor&background=4e73df&color=fff" alt="User" class="rounded-circle" width="40" height="40">
+              <button id="userDropdown" class="btn btn-link p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="~/assets/img/profile.jpg" alt="User" class="rounded-circle" width="40" height="40">
               </button>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                <li><h6 class="dropdown-header">Dr. John Smith</h6></li>
-                <li><a class="dropdown-item" href="#">Profile</a></li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#" @click="logout">Logout</a></li>
-              </ul>
             </div>
           </div>
         </div>
       </nav>
-      <div id="main-content" class="p-4 bg-light">
+      <div id="main-content" class="p-5">
         <NuxtPage />
       </div>
     </div>
@@ -81,7 +60,6 @@
 	}
 
 	const checkWindowSize = () => {
-      // Auto-collapse sidebar on small screens
       if (window.innerWidth < 768) {
         sidebarOpen.value = false
 				console.log('sidebar hide')
@@ -91,21 +69,19 @@
       }
     }
 
-    const logout = () => {
+    // const logout = () => {
     //   this.$store.dispatch('auth/logout');
     //   this.$router.push('/login');
-    }
+    // }
 
 		onMounted(() => {
-			// Check if the user is authenticated when the app loads
 			checkWindowSize()
 			window.addEventListener('resize', checkWindowSize)
 		})
 
 		onUnmounted(() => {
-  // Clean up event listener
-  window.removeEventListener('resize', checkWindowSize);
-})
+			window.removeEventListener('resize', checkWindowSize);
+		})
 
 
 
@@ -135,12 +111,14 @@
 #main-content {
   overflow-y: auto;
   flex: 1;
+	background: #F5F5FB !important;
+	padding: 40px 120px !important;
 }
 
 .navbar {
   height: 60px;
   padding: 0.5rem 1rem;
-  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+	background: #F5F5FB !important;
 }
 
 .dropdown-menu {
@@ -157,9 +135,18 @@
   color: #4e73df;
 }
 
+
+.tour {
+	font-weight: 600;
+	font-size: 1rem;
+	color: #575758;
+}
 @media (max-width: 767.98px) {
   #content-wrapper, #content-wrapper.sidebar-collapsed {
     width: 100%;
   }
+	#main-content {
+	padding: 0 !important;
+}
 }
 </style>

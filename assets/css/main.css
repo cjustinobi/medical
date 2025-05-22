@@ -1,0 +1,17 @@
+:root {
+  --primary-color: #2A36A4;
+  --primary-txt-color: #382F90;
+}
+
+#sidebar .active {
+    background: var(--primary-color);
+}
+
+.text-primary {
+    color: var(--primary-txt-color) !important;
+}
+
+.form-select:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
