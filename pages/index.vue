@@ -8,42 +8,44 @@
     
     <div class="card border-0">
       <div class="card-body">
-				<div 
-					v-if="alertState.show" 
-					:class="`alert alert-${alertState.type} alert-dismissible fade show`" 
-					role="alert"
-					style="position: fixed; top: 80px; right: 20px; z-index: 1050; max-width: 400px;">
-					<strong v-if="alertState.type === 'success'">Success!</strong>
-					<strong v-else-if="alertState.type === 'danger'">Error!</strong>
-					<strong v-else-if="alertState.type === 'warning'">Warning!</strong>
-					<strong v-else-if="alertState.type === 'info'">Info!</strong>
-					{{ alertState.message }}
-				</div>
+        <div 
+          v-if="alertState.show" 
+          :class="`alert alert-${alertState.type} alert-dismissible fade show`" 
+          role="alert"
+          style="position: fixed; top: 80px; right: 20px; z-index: 1050; max-width: 400px;">
+          <strong v-if="alertState.type === 'success'">Success!</strong>
+          <strong v-else-if="alertState.type === 'danger'">Error!</strong>
+          <strong v-else-if="alertState.type === 'warning'">Warning!</strong>
+          <strong v-else-if="alertState.type === 'info'">Info!</strong>
+          {{ alertState.message }}
+        </div>
+        
         <form class="p-5" @submit.prevent="saveMedicalRecord">
-          <div v-if="investigations.length" class="mb-4">
-            <h4 class="text-primary mb-3">X-Ray</h4>
-            <div class="row row-cols-1 row-cols-md-4 g-3">
-              <div v-for="investigation in investigations" :key="investigation.id" class="col">
-                <div class="form-check">
-                  <input 
-										:id="'investigation-' + investigation.id"
-										v-model="selectedInvestigations[investigation.id]"
-                    class="form-check-input" 
-                    type="checkbox"  
-                  >
-                  <label class="form-check-label" :for="'investigation-' + investigation.id">
-                    {{ investigation.title }}
-                  </label>
+          <template v-for="(items, type) in groupedInvestigations" :key="type">
+            <div class="mb-4">
+              <h4 class="text-primary mb-3">{{ type }}</h4>
+              <div class="row row-cols-1 row-cols-md-4 g-3">
+                <div v-for="item in items" :key="item.id" class="col">
+                  <div class="form-check">
+                    <input 
+                      :id="`investigation-${item.id}`"
+                      v-model="selectedInvestigations[item.id]"
+                      class="form-check-input" 
+                      type="checkbox"  
+                    >
+                    <label class="form-check-label" :for="`investigation-${item.id}`">
+                      {{ item.title }}
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          
-          <hr>
+            <hr>
+          </template>
           
           <div class="row mb-4">
             <div class="col-md-6">
-              <p class="mb-3">CT Scan</p>
+              <p class="text-muted mb-3">CT Scan</p>
               <div>
                 <select id="ctScan" v-model="ctScan" class="form-select">
                   <option disabled value="" selected>*Specify</option>
@@ -55,11 +57,12 @@
                 </select>
               </div>
             </div>
+            
             <div class="col-md-6">
-              <p class="mb-3">MRI</p>
+              <p class="text-muted mb-3">MRI</p>
               <div>
                 <select id="mri" v-model="mri" class="form-select">
-                  <option value="" selected>*Specify</option>
+                  <option disabled value="" selected>*Specify</option>
                   <option value="brain">Brain</option>
                   <option value="spine">Spine</option>
                   <option value="joints">Joints</option>
@@ -71,7 +74,9 @@
           </div>
           
           <div class="d-flex justify-content-end">
-            <button :disabled="loading" type="submit" class="btn text-white px-4"> Save and Send </button>
+            <button :disabled="loading" type="submit" class="btn text-white px-4"> 
+              Save and Send 
+            </button>
           </div>
         </form>
       </div>
@@ -83,7 +88,12 @@
 	interface Investigation {
 		id: string
 		title: string
+		type: {
+			id: string
+			title: string
+		}
 	}
+
 	const investigations = ref<Investigation[]>([])
 	const selectedInvestigations = reactive<Record<string, boolean>>({})
 	const ctScan = ref('')
@@ -94,6 +104,19 @@
 		show: false,
 		type: 'success',
 		message: '',
+	})
+
+	const groupedInvestigations = computed(() => {
+		const groups: Record<string, Investigation[]> = {}
+		
+		investigations.value.forEach(inv => {
+			if (!groups[inv.type.title]) {
+				groups[inv.type.title] = []
+			}
+			groups[inv.type.title].push(inv)
+		})
+		
+		return groups
 	})
 
 	const showAlert = (type: string, message: string) => {
@@ -115,9 +138,10 @@
 			investigations.value.forEach(inv => {
 				selectedInvestigations[inv.id] = false
 			})
+			
 			loading.value = false
 		} catch (err) {
-			showError('Failed to load investigations. Please refresh the page.')
+			showAlert('danger', 'Failed to load investigations. Please refresh the page.')
 			console.error('Error fetching investigations:', err)
 			loading.value = false
 		}
@@ -129,47 +153,50 @@
 			const selectedIds = Object.entries(selectedInvestigations)
 				.filter(([_, isSelected]) => isSelected)
 				.map(([id]) => id.toString())
-	
+			
 			const result = await GqlSaveInvestigation({
 				investigations: selectedIds,
 				ctscan: ctScan.value || "Not specified",
 				mri: mri.value || "Not specified",
 				developer: "cjustinobi",
 			})
+			
 			showAlert('success', 'Medical record saved successfully!')
 			console.log('Record saved:', result)
-			loading.value = false
 			resetForm()
 		} catch (error) {
 			showAlert('danger', 'Failed to save medical record. Please try again.')
 			console.error('Error saving record:', error)
+		} finally {
 			loading.value = false
 		}
 	}
 
 	const resetForm = () => {
-  Object.keys(selectedInvestigations).forEach(key => {
-    selectedInvestigations[key] = false
-  })
-  ctScan.value = ''
-  mri.value = ''
-}
+		Object.keys(selectedInvestigations).forEach(key => {
+			selectedInvestigations[key] = false
+		})
+		ctScan.value = ''
+		mri.value = ''
+	}
 
 	onMounted(async () => {
 		await fetchInvestigations()
 	})
-
 </script>
 
 <style scoped>
-	.alert {
-    position: fixed;
-    top: 420px;
-    right: 20px;
-    z-index: 1000;
-    max-width: 400px;
-  }
-	button {
-		background: var(--primary-color) !important;
-	}
+.alert {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 1050;
+  max-width: 400px;
+}
+button {
+  background: var(--primary-color) !important;
+}
+.text-muted {
+  color: rgb(138, 139, 140) !important;
+}
 </style>

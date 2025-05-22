@@ -53,7 +53,7 @@ const handleLogin = async () => {
     })
 
     if (!login) {
-      error.value = 'Invalid credentials'
+      console.log('Invalid credentials')
       return
     }
 

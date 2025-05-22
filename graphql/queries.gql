@@ -5,7 +5,11 @@ mutation LoginUser($email: String!, $password: String!) {
 query GetInvestigations {
   investigations {
     id
-    title
+    title,
+    type {
+      id
+      title
+    }
   }
 }
 
