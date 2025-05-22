@@ -1,5 +1,6 @@
 <template>
   <div class="wrapper">
+    <div v-if="sidebarOpen" class="sidebar-backdrop" @click="sidebarOpen = false" />
     <LayoutsSidebar :is-expanded="sidebarOpen" />
     <div id="content-wrapper" :class="{ 'sidebar-collapsed': !sidebarOpen }">
       <nav class="navbar navbar-expand-lg sticky-top">
@@ -15,24 +16,16 @@
             
             <div class="dropdown me-3">
               <button id="messagesDropdown" class="btn btn-link text-muted position-relative" type="button"  data-bs-toggle="dropdown" aria-expanded="false">
-								<BIcon icon="bi:envelope" />
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+								<BIcon icon="bi:envelope-fill" style="background: #382F90;" />
+                <span class="notification-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                   3
                 </span>
               </button>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="messagesDropdown">
-                <li><h6 class="dropdown-header">Recent Messages</h6></li>
-                <li><a class="dropdown-item" href="#">New appointment request</a></li>
-                <li><a class="dropdown-item" href="#">Test results available</a></li>
-                <li><a class="dropdown-item" href="#">Prescription renewal</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">View all messages</a></li>
-              </ul>
             </div>
             
             <div class="dropdown me-3">
               <button id="notificationsDropdown" class="btn btn-link text-muted position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-								<BIcon icon="bi:bell-fill"/>
+								<BIcon icon="bi:bell-fill" style="background: #382F9099;"/>
               </button>
             </div>
             
@@ -141,12 +134,27 @@
 	font-size: 1rem;
 	color: #575758;
 }
+
+.notification-badge {
+  top: 5px !important;
+  left: 33px !important;
+}
+
 @media (max-width: 767.98px) {
   #content-wrapper, #content-wrapper.sidebar-collapsed {
     width: 100%;
   }
 	#main-content {
-	padding: 0 !important;
-}
+	  padding: 0 !important;
+  }
+  .sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998; /* below sidebar */
+  }
 }
 </style>

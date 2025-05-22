@@ -1,23 +1,19 @@
 // types/graphql.d.ts
-import type { getSdk as defaultGqlSdk } from '#gql/default'
+// import type { getSdk as defaultGqlSdk } from '#gql/default'
 
 declare module '#gql' {
-  type GqlClients = 'default'
-  type GqlOps = 'LoginUser' | 'GetInvestigations'
+//   type GqlClients = 'default'
+  // type GqlOps = 'LoginUser' | 'GetInvestigations'
   
-  interface GqlSdkFuncs extends ReturnType<typeof defaultGqlSdk> {
-    LoginUser: (variables: { email: string; password: string }) => Promise<{
-      loginUser?: {
-        token: string
-        user?: {
-          id: string
-          name: string
-          email: string
-        }
-      }
-    }>
-  }
+// interface GqlSdkFuncs extends ReturnType<typeof defaultGqlSdk> {
+//   LoginUser: (variables: { 
+//     email: string; 
+//     password: string 
+//   }) => Promise<{
+//     login?: string
+//   }>
+// }
 
-  export const GqlLoginUser: GqlSdkFuncs['LoginUser']
+  // export const GqlLoginUser: GqlSdkFuncs['LoginUser']
   export const GqlGetInvestigations: GqlSdkFuncs['GetInvestigations']
 }

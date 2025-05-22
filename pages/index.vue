@@ -162,7 +162,7 @@
 </script>
 
 <style scoped>
-.alert {
+	.alert {
     position: fixed;
     top: 420px;
     right: 20px;
@@ -170,6 +170,6 @@
     max-width: 400px;
   }
 	button {
-			background: var(--primary-color) !important;
+		background: var(--primary-color) !important;
 	}
 </style>

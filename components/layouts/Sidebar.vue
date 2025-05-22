@@ -1,5 +1,5 @@
 <template>
-  <aside id="sidebar" :class="{ 'collapsed': !sidebarExpanded }">
+  <aside id="sidebar" ref="sidebarRef" :class="{ 'collapsed': !sidebarExpanded }">
     <div class="sidebar-body">
       <ul class="nav flex-column">
         <li class="nav-item">
@@ -88,10 +88,29 @@
     }
   })
 
-  const sidebarExpanded = computed(() => props.isExpanded)
-
   const router = useRouter()
   const route = useRoute()
+  const emit = defineEmits(['update:isExpanded'])
+  const sidebarRef = ref<HTMLElement | null>(null)
+
+  const sidebarExpanded = computed({
+    get: () => props.isExpanded,
+    set: (value) => emit('update:isExpanded', value)
+  })
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (sidebarRef.value && !sidebarRef.value.contains(event.target as Node)) {
+      sidebarExpanded.value = false
+    }
+  }
+
+  onMounted(() => {
+    document.addEventListener('click', handleClickOutside)
+  })
+
+  onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside)
+  })
 
   const isActive = (path: string) => route.path === path
 
@@ -99,6 +118,10 @@
     // authStore.logout()
     router.push('/login')
   }
+
+  watch(() => route.path, () => {
+    sidebarExpanded.value = false
+  })
 
 
 </script>
@@ -169,7 +192,7 @@
     left: 0;
     height: 100vh;
     z-index: 9999;
-    background: #f1f3fb;
+    background: #f1f3f9;
   }
   
   #sidebar.collapsed {

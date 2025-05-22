@@ -51,17 +51,20 @@ const handleLogin = async () => {
       email: email.value,
       password: password.value
     })
-    if (login) {
-			console.log('login ', login)
-      setToken(login)
-      router.push('/')
-    } else {
+
+    if (!login) {
       error.value = 'Invalid credentials'
+      return
     }
+
+    console.log('login ', login)
+    setToken(login)
+    router.push('/')
+    
   } catch (err) {
     console.log('err', err)
-    error.value = 'Login failed. Please try again.' + JSON.stringify(err)
   } finally {
+    router.push('/')
     loading.value = false
   }
 }
